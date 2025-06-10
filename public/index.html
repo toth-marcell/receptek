@@ -1,126 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hu">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>felhasznalok</h1>
     <div>
-        <h2>regisztracio</h2>
-        <input id="regname" name="regname" type="text" placeholder="name">
-        <input id="rpass" name="rpass" type="password" placeholder="password">
-        <button onclick="reg()">reg</button>
+      <h2>regisztracio</h2>
+      <input id="regname" name="regname" type="text" placeholder="name">
+      <input id="rpass" name="rpass" type="password" placeholder="password">
+      <button onclick="reg()">reg</button>
     </div>
 
     <div>
-        <h2>Bejelentkezés</h2>
-        <input id="loginUsername" type="text" placeholder="Felhasználónév">
-        <input id="loginPassword" type="password" placeholder="Jelszó">
-        <button onclick="login()">Bejelentkezés</button>
+      <h2>Bejelentkezés</h2>
+      <input id="loginUsername" type="text" placeholder="Felhasználónév">
+      <input id="loginPassword" type="password" placeholder="Jelszó">
+      <button onclick="login()">Bejelentkezés</button>
     </div>
 
     <div>
-        <h2>Saját profil</h2>
-        <button onclick="getProfile()">Profil betöltése</button>
-        <div id="profileDetails"></div>
+      <h2>Saját profil</h2>
+      <button onclick="getProfile()">Profil betöltése</button>
+      <div id="profileDetails"></div>
     </div>
 
     <h1>receptek</h1>
     <div>
-        <h2>Új recept létrehozása</h2>
-        <input type="text" id="rname" placeholder="Recept neve">
-        <input type="text" id="ringredients" placeholder="Hozzávalók">
-        <button onclick="create()">Létrehozás</button>
-    </div>
-
-
-    <div>
-        <h2>szerkesztes</h2>
-        <input id="editId" type="number" placeholder="Recept ID">
-        <input id="ename" type="text" placeholder="Új név">
-        <input id="eing" type="text" placeholder="Új összetevők">
-        <button onclick="edit()">Szerkesztés</button>
+      <h2>Új recept létrehozása</h2>
+      <input type="text" id="rname" placeholder="Recept neve">
+      <input type="text" id="ringredients" placeholder="Hozzávalók">
+      <button onclick="create()">Létrehozás</button>
     </div>
 
     <div>
-        <h2>Keresés név szerint</h2>
-        <input id="searchInput" type="text" placeholder="Recept neve">
-        <button onclick="searchByName()">Keresés</button>
-        <div id="searchResults"></div>
+      <h2>szerkesztes</h2>
+      <input id="editId" type="number" placeholder="Recept ID">
+      <input id="ename" type="text" placeholder="Új név">
+      <input id="eing" type="text" placeholder="Új összetevők">
+      <button onclick="edit()">Szerkesztés</button>
     </div>
 
     <div>
-        <h2>Keresés kategória szerint</h2>
-        <input id="categoryInput" type="text" placeholder="Kategória">
-        <button onclick="searchByCategory()">Keresés kategóriára</button>
-        <div id="categoryResults"></div>
+      <h2>Keresés név szerint</h2>
+      <input id="searchInput" type="text" placeholder="Recept neve">
+      <button onclick="searchByName()">Keresés</button>
+      <div id="searchResults"></div>
     </div>
 
     <div>
-        <h2>Keresés hozzávaló szerint</h2>
-        <input id="ingredientInput" type="text" placeholder="Hozzávaló">
-        <button onclick="searchByIngredient()">Keresés hozzávalóra</button>
-        <div id="ingredientResults"></div>
+      <h2>Keresés kategória szerint</h2>
+      <input id="categoryInput" type="text" placeholder="Kategória">
+      <button onclick="searchByCategory()">Keresés kategóriára</button>
+      <div id="categoryResults"></div>
     </div>
 
     <div>
-        <h2>Legnépszerűbb kategóriák</h2>
-        <button onclick="loadPopularCategories()">Mutasd a legnépszerűbbeket</button>
-        <div id="popularCategories"></div>
-    </div>
-
-     <div>
-    <h2>Hozzávaló hozzáadása recepthez</h2>
-    <input id="ingredientRecipeId" type="number" placeholder="Recept ID">
-    <input id="newIngredient" type="text" placeholder="Új hozzávaló">
-    <button onclick="addIngredientFromForm()">Hozzáadás</button>
+      <h2>Keresés hozzávaló szerint</h2>
+      <input id="ingredientInput" type="text" placeholder="Hozzávaló">
+      <button onclick="searchByIngredient()">Keresés hozzávalóra</button>
+      <div id="ingredientResults"></div>
     </div>
 
     <div>
-    <h2>Hozzávalók megtekintése</h2>
-    <input id="viewIngredientsId" type="number" placeholder="Recept ID">
-    <button onclick="viewIngredients()">Hozzávalók lekérése</button>
-    <div id="ingredientsList"></div>
+      <h2>Legnépszerűbb kategóriák</h2>
+      <button onclick="loadPopularCategories()">
+        Mutasd a legnépszerűbbeket
+      </button>
+      <div id="popularCategories"></div>
     </div>
 
     <div>
-  <h2>Hozzávaló törlése receptből</h2>
-  <input id="deleteFromRecipeId" type="number" placeholder="Recept ID">
-  <input id="ingredientToDelete" type="text" placeholder="Törlendő hozzávaló">
-  <button onclick="deleteIngredientFromRecipe()">Törlés</button>
-  <div id="ingredientDeleteMsg"></div>
+      <h2>Hozzávaló hozzáadása recepthez</h2>
+      <input id="ingredientRecipeId" type="number" placeholder="Recept ID">
+      <input id="newIngredient" type="text" placeholder="Új hozzávaló">
+      <button onclick="addIngredientFromForm()">Hozzáadás</button>
     </div>
 
-<h2>Új kategória</h2>
-<input type="text" id="categoryName" placeholder="Kategória neve">
-<button onclick="createCategory()">Kategória létrehozása</button>
+    <div>
+      <h2>Hozzávalók megtekintése</h2>
+      <input id="viewIngredientsId" type="number" placeholder="Recept ID">
+      <button onclick="viewIngredients()">Hozzávalók lekérése</button>
+      <div id="ingredientsList"></div>
+    </div>
 
-<hr>
+    <div>
+      <h2>Hozzávaló törlése receptből</h2>
+      <input id="deleteFromRecipeId" type="number" placeholder="Recept ID">
+      <input
+        id="ingredientToDelete"
+        type="text"
+        placeholder="Törlendő hozzávaló"
+      >
+      <button onclick="deleteIngredientFromRecipe()">Törlés</button>
+      <div id="ingredientDeleteMsg"></div>
+    </div>
 
-<h2>Kategóriák listája</h2>
-<div id="categoryList"></div>
+    <h2>Új kategória</h2>
+    <input type="text" id="categoryName" placeholder="Kategória neve">
+    <button onclick="createCategory()">Kategória létrehozása</button>
 
-<hr>
+    <hr>
 
-<h2>Kategória hozzárendelése recepthez</h2>
-<input type="number" id="assignRecipeId" placeholder="Recept ID">
-<input type="number" id="assignCategoryId" placeholder="Kategória ID">
-<button onclick="assignCategoryToRecipe()">Hozzárendelés</button>
+    <h2>Kategóriák listája</h2>
+    <div id="categoryList"></div>
 
+    <hr>
+
+    <h2>Kategória hozzárendelése recepthez</h2>
+    <input type="number" id="assignRecipeId" placeholder="Recept ID">
+    <input type="number" id="assignCategoryId" placeholder="Kategória ID">
+    <button onclick="assignCategoryToRecipe()">Hozzárendelés</button>
 
     <div id="osszes">
-        <p>Összes recept:</p>
-        <button onclick="Load()">Frissítés</button>
+      <p>Összes recept:</p>
+      <button onclick="Load()">Frissítés</button>
     </div>
 
     <div id="recipeDetails"></div>
 
     <script src="script.js"></script>
-</body>
-
+  </body>
 </html>

@@ -6,9 +6,18 @@
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
   },
+  "devDependencies": {
+    "@awmottaz/prettier-plugin-void-html": "^1.8.0",
+    "prettier": "^3.5.3"
+  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "sqlite3"
+    ]
+  },
+  "prettier": {
+    "plugins": [
+      "@awmottaz/prettier-plugin-void-html"
     ]
   }
 }
