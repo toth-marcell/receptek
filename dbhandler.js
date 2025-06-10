@@ -1,10 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-const handler = new Sequelize('data', 'root', '', {
-  dialect: 'mysql',
-  host: 'localhost'
-});
-
+const handler = new Sequelize("sqlite:db.sqlite")
 
 exports.categories = handler.define('category', {  
   id: {
@@ -76,3 +72,4 @@ exports.recipes.belongsTo(exports.categories, {
   onUpdate: 'CASCADE'
 });
 
+handler.sync()

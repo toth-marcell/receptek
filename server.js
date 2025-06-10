@@ -9,12 +9,6 @@ server.use(express.static('public'))
 const PORT = process.env.PORT
 const SECRET_KEY = process.env.SECRET_KEY
 
-
-
-dbhandler.users.sync({ alter: true })
-dbhandler.categories.sync({ alter: true });
-dbhandler.recipes.sync({ alter: true })
-
 const jwt = require('jsonwebtoken');
 
 server.post('/auth/login', async (req, res) => {
