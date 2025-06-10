@@ -1,65 +1,27 @@
-const { Sequelize, DataTypes } = require("sequelize");
+import { Sequelize, DataTypes } from "sequelize";
 
-const handler = new Sequelize("sqlite:db.sqlite");
+const sequelize = new Sequelize("sqlite:data/db.sqlite");
 
-exports.categories = handler.define(
-  "category",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-  },
-  {
-    tableName: "categorytable",
-  },
-);
-
-exports.recipes = handler.define(
-  "recipe",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    ingredients: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: "categorytable",
-        key: "id",
-      },
-    },
-  },
-  {
-    tableName: "recipetable",
-  },
-);
-
-exports.users = handler.define("usertable", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+export const Category = sequelize.define("Category", {
+  name: {
+    type: DataTypes.STRING,
     allowNull: false,
-    primaryKey: true,
+    unique: true,
   },
+});
+
+export const Recipe = sequelize.define("Recipe", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  ingredients: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+export const User = sequelize.define("User", {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -70,12 +32,11 @@ exports.users = handler.define("usertable", {
   },
 });
 
-exports.categories.hasMany(exports.recipes, { foreignKey: "categoryId" });
-exports.recipes.belongsTo(exports.categories, {
+Category.hasMany(Recipe, { foreignKey: "categoryId" });
+Recipe.belongsTo(Category, {
   foreignKey: "categoryId",
-  targetKey: "id",
   onDelete: "SET NULL",
   onUpdate: "CASCADE",
 });
 
-handler.sync();
+await sequelize.sync();

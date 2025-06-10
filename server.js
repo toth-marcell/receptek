@@ -1,6 +1,10 @@
-const express = require("express");
-const dbhandler = require("./dbhandler");
-require("dotenv").config();
+import express from "express";
+import jwt from "jsonwebtoken";
+import { Category, Recipe, User } from "./dbhandler.js";
+import { Sequelize } from "sequelize";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 const server = express();
 server.use(express.json());
@@ -8,8 +12,6 @@ server.use(express.static("public"));
 
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.SECRET_KEY;
-
-const jwt = require("jsonwebtoken");
 
 server.post("/auth/login", async (req, res) => {
   try {
@@ -21,7 +23,7 @@ server.post("/auth/login", async (req, res) => {
         .json({ message: "Felhasználónév és jelszó kötelező!" });
     }
 
-    const user = await dbhandler.users.findOne({ where: { username } });
+    const user = await User.findOne({ where: { username } });
     if (!user) {
       return res.status(401).json({ message: "Hibás adatok!" });
     }
@@ -60,7 +62,7 @@ function authenticateToken(req, res, next) {
 
 server.get("/users/me", authenticateToken, async (req, res) => {
   try {
-    const user = await dbhandler.users.findByPk(req.user.userId, {
+    const user = await User.findByPk(req.user.userId, {
       attributes: { exclude: ["password"] },
     });
 
@@ -84,12 +86,12 @@ server.post("/recipes", async (req, res) => {
         .json({ message: "Minden mező kitöltése kötelező!" });
     }
 
-    /*const category = await dbhandler.categories.findByPk(categoryId);
+    /*const category = await Category.findByPk(categoryId);
         if (!category) {
             return res.status(404).json({message: "Nem található ilyen kategória!"});
         }*/
 
-    await dbhandler.recipes.create({
+    await Recipe.create({
       name,
       ingredients, //,
       //categoryId
@@ -109,7 +111,7 @@ server.get("/recipes", async (req, res) => {
 
   if (category) {
     include.push({
-      model: dbhandler.categories,
+      model: Category,
       where: {
         name: {
           [Sequelize.Op.like]: `%${category}%`,
@@ -126,7 +128,7 @@ server.get("/recipes", async (req, res) => {
   }
 
   try {
-    const results = await dbhandler.recipes.findAll({
+    const results = await Recipe.findAll({
       where,
       include,
     });
@@ -137,18 +139,16 @@ server.get("/recipes", async (req, res) => {
   }
 });
 
-const { Sequelize } = require("sequelize");
-
 server.get("/categories/popular", async (req, res) => {
   try {
-    const popularCategories = await dbhandler.recipes.findAll({
+    const popularCategories = await Recipe.findAll({
       attributes: [
         "categoryId",
         [Sequelize.fn("COUNT", Sequelize.col("recipe.categoryId")), "count"],
       ],
       include: [
         {
-          model: dbhandler.categories,
+          model: Category,
           attributes: ["name"],
           required: true,
         },
@@ -171,7 +171,7 @@ server.get("/categories/popular", async (req, res) => {
 
 server.delete("/recipes/:id", async (req, res) => {
   try {
-    const deleted = await dbhandler.recipes.destroy({
+    const deleted = await Recipe.destroy({
       where: { id: parseInt(req.params.id) },
     });
     if (deleted) {
@@ -187,7 +187,7 @@ server.delete("/recipes/:id", async (req, res) => {
 
 server.get("/recipes/:id", async (req, res) => {
   try {
-    const recipe = await dbhandler.recipes.findByPk(parseInt(req.params.id));
+    const recipe = await Recipe.findByPk(parseInt(req.params.id));
     if (recipe) {
       res.json(recipe);
     } else {
@@ -202,7 +202,7 @@ server.get("/recipes/title/:title", async (req, res) => {
   try {
     const title = req.params.title;
     // exact match; for partial search uncomment Op and adjust accordingly
-    const recipes = await dbhandler.recipes.findAll({
+    const recipes = await Recipe.findAll({
       where: { name: title },
       // for partial: where: { name: { [Sequelize.Op.like]: `%${title}%` } }
     });
@@ -215,7 +215,7 @@ server.get("/recipes/title/:title", async (req, res) => {
 server.put("/recipes/:id", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
-    const [updated] = await dbhandler.recipes.update(
+    const [updated] = await Recipe.update(
       {
         name: req.body.name,
         ingredients: req.body.ingredients,
@@ -244,14 +244,14 @@ server.post("/users/register", async (req, res) => {
         .json({ message: "Felhasználónév és jelszó kötelező!" });
     }
 
-    const existingUser = await dbhandler.users.findOne({ where: { username } });
+    const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res
         .status(409)
         .json({ message: "Ez a felhasználónév már foglalt!" });
     }
 
-    const newUser = await dbhandler.users.create({ username, password });
+    const newUser = await User.create({ username, password });
     res
       .status(201)
       .json({ message: "Sikeres regisztráció!", userId: newUser.id });
@@ -269,7 +269,7 @@ server.post("/recipes/:id/ingredients", async (req, res) => {
       return res.status(400).json({ message: "Hozzávaló név kötelező!" });
     }
 
-    const recipe = await dbhandler.recipes.findByPk(recipeId);
+    const recipe = await Recipe.findByPk(recipeId);
     if (!recipe) {
       return res.status(404).json({ message: "Recept nem található!" });
     }
@@ -296,7 +296,7 @@ server.get("/recipes/:id/ingredients", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
 
-    const recipe = await dbhandler.recipes.findByPk(recipeId);
+    const recipe = await Recipe.findByPk(recipeId);
     if (!recipe) {
       return res.status(404).json({ message: "Recept nem található!" });
     }
@@ -335,11 +335,11 @@ server.post("/categories", async (req, res) => {
     if (!name) {
       return res.status(400).json({ message: "A kategória neve kötelező!" });
     }
-    const existing = await dbhandler.categories.findOne({ where: { name } });
+    const existing = await Category.findOne({ where: { name } });
     if (existing) {
       return res.status(409).json({ message: "Ez a kategória már létezik!" });
     }
-    const newCategory = await dbhandler.categories.create({ name });
+    const newCategory = await Category.create({ name });
     res.status(201).json(newCategory);
   } catch (error) {
     console.error(error);
@@ -351,7 +351,7 @@ server.post("/categories", async (req, res) => {
 
 server.get("/categories", async (req, res) => {
   try {
-    const categories = await dbhandler.categories.findAll();
+    const categories = await Category.findAll();
     res.json(categories);
   } catch (error) {
     console.error(error);
@@ -372,14 +372,14 @@ server.put("/recipes/:id/category", async (req, res) => {
         .json({ message: "A kategória azonosítója kötelező!" });
     }
 
-    const category = await dbhandler.categories.findByPk(categoryId);
+    const category = await Category.findByPk(categoryId);
     if (!category) {
       return res
         .status(404)
         .json({ message: "Nem található ilyen kategória!" });
     }
 
-    const recipe = await dbhandler.recipes.findByPk(recipeId);
+    const recipe = await Recipe.findByPk(recipeId);
     if (!recipe) {
       return res.status(404).json({ message: "Nem található ilyen recept!" });
     }
