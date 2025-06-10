@@ -6,14 +6,14 @@ import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 dotenv.config();
 
-const server = express();
-server.use(express.json());
-server.use(express.static("public"));
+const app = express();
+app.use(express.json());
+app.use(express.static("public"));
 
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.SECRET_KEY;
 
-server.post("/auth/login", async (req, res) => {
+app.post("/auth/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -60,7 +60,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-server.get("/users/me", authenticateToken, async (req, res) => {
+app.get("/users/me", authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.userId, {
       attributes: { exclude: ["password"] },
@@ -76,7 +76,7 @@ server.get("/users/me", authenticateToken, async (req, res) => {
   }
 });
 
-server.post("/recipes", async (req, res) => {
+app.post("/recipes", async (req, res) => {
   try {
     const { name, ingredients /*, categoryId */ } = req.body;
 
@@ -104,7 +104,7 @@ server.post("/recipes", async (req, res) => {
   }
 });
 
-server.get("/recipes", async (req, res) => {
+app.get("/recipes", async (req, res) => {
   const { category, ingredient } = req.query;
   const where = {};
   const include = [];
@@ -139,7 +139,7 @@ server.get("/recipes", async (req, res) => {
   }
 });
 
-server.get("/categories/popular", async (req, res) => {
+app.get("/categories/popular", async (req, res) => {
   try {
     const popularCategories = await Recipe.findAll({
       attributes: [
@@ -169,7 +169,7 @@ server.get("/categories/popular", async (req, res) => {
   }
 });
 
-server.delete("/recipes/:id", async (req, res) => {
+app.delete("/recipes/:id", async (req, res) => {
   try {
     const deleted = await Recipe.destroy({
       where: { id: parseInt(req.params.id) },
@@ -185,7 +185,7 @@ server.delete("/recipes/:id", async (req, res) => {
   res.end();
 });
 
-server.get("/recipes/:id", async (req, res) => {
+app.get("/recipes/:id", async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(parseInt(req.params.id));
     if (recipe) {
@@ -198,7 +198,7 @@ server.get("/recipes/:id", async (req, res) => {
   }
 });
 
-server.get("/recipes/title/:title", async (req, res) => {
+app.get("/recipes/title/:title", async (req, res) => {
   try {
     const title = req.params.title;
     // exact match; for partial search uncomment Op and adjust accordingly
@@ -212,7 +212,7 @@ server.get("/recipes/title/:title", async (req, res) => {
   }
 });
 
-server.put("/recipes/:id", async (req, res) => {
+app.put("/recipes/:id", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
     const [updated] = await Recipe.update(
@@ -234,7 +234,7 @@ server.put("/recipes/:id", async (req, res) => {
   }
 });
 
-server.post("/users/register", async (req, res) => {
+app.post("/users/register", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -260,7 +260,7 @@ server.post("/users/register", async (req, res) => {
   }
 });
 
-server.post("/recipes/:id/ingredients", async (req, res) => {
+app.post("/recipes/:id/ingredients", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
     const newIngredient = req.body.name;
@@ -292,7 +292,7 @@ server.post("/recipes/:id/ingredients", async (req, res) => {
   }
 });
 
-server.get("/recipes/:id/ingredients", async (req, res) => {
+app.get("/recipes/:id/ingredients", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
 
@@ -311,7 +311,7 @@ server.get("/recipes/:id/ingredients", async (req, res) => {
   }
 });
 
-server.delete("/ingredients/:id", async (req, res) => {
+app.delete("/ingredients/:id", async (req, res) => {
   try {
     const ingredientId = parseInt(req.params.id);
 
@@ -329,7 +329,7 @@ server.delete("/ingredients/:id", async (req, res) => {
   }
 });
 
-server.post("/categories", async (req, res) => {
+app.post("/categories", async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -349,7 +349,7 @@ server.post("/categories", async (req, res) => {
   }
 });
 
-server.get("/categories", async (req, res) => {
+app.get("/categories", async (req, res) => {
   try {
     const categories = await Category.findAll();
     res.json(categories);
@@ -361,7 +361,7 @@ server.get("/categories", async (req, res) => {
   }
 });
 
-server.put("/recipes/:id/category", async (req, res) => {
+app.put("/recipes/:id/category", async (req, res) => {
   try {
     const recipeId = parseInt(req.params.id);
     const { categoryId } = req.body;
@@ -399,6 +399,6 @@ server.put("/recipes/:id/category", async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
