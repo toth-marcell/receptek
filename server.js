@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 const PORT = process.env.PORT;
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRETKEY = process.env.SECRETKEY;
 
 app.post("/auth/login", async (req, res) => {
   try {
@@ -32,7 +32,7 @@ app.post("/auth/login", async (req, res) => {
       return res.status(401).json({ message: "Hibás adatok!" });
     }
 
-    const token = jwt.sign({ userId: user.id }, "titkos_kulcs", {
+    const token = jwt.sign({ userId: user.id }, SECRETKEY, {
       expiresIn: "1h",
     });
 
@@ -51,7 +51,7 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ message: "Hozzáférés megtagadva!" });
   }
 
-  jwt.verify(token, "titkos_kulcs", (err, user) => {
+  jwt.verify(token, SECRETKEY, (err, user) => {
     if (err) {
       return res.status(403).json({ message: "Érvénytelen token!" });
     }
